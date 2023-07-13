@@ -76,8 +76,8 @@ def gen_result(line_tokens):
 if __name__ == '__main__':
     print_hi('PyCharm')
     source_data_dir = "data"
-    target_file_origin = "15M.XTRD"
-    target_file_backup = target_file_origin + "_backup"
+    target_file_origin = "D:\wh6通用版\Formula\TYPES\自编\TRADE_HISTORY_15M.XTRD"
+    target_file_backup = "target_backup"
     shutil.copyfile(target_file_origin, target_file_backup)
 
     origin_lines = set()
