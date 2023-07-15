@@ -10,7 +10,8 @@ import datetime
 # 原始文件中的数据，以防止当天多次导出，记录重复
 from cfets_calendar.calendar import load_calendar, calendar_set
 from common.file_type import FileType
-from input import wenhua,kuaiqi
+from input.kuaiqi import KuaiQi
+from input.wenhua import WenHua
 from common.logger import logger
 
 # 数据目录
@@ -221,18 +222,38 @@ def process_data_folder():
             if line_stripped and 'CODE' not in line_stripped:
                 origin_lines.add(line_stripped)
     # 原有的数据，也需要进行保留
-    final_result_lines.update(line_stripped)
+    final_result_set.update(line_stripped)
     # 读取数据文件夹下的交易记录
     for data_file in os.listdir(data_folder_path):
         file_type = identify_file_type(data_file)
         file_full_path = os.path.join(data_folder_path, data_file)
 
         if file_type == FileType.WEN_HUA:
-            final_result_lines.update(wenhua.process(file_full_path))
+            file_processor = WenHua()
         elif file_type == FileType.KUAI_QI:
-            final_result_lines.update(kuaiqi.process(file_full_path))
+            file_processor = KuaiQi(data_folder_path, data_file)
         else:
             logger.warn("Ignore file:%s", file_full_path)
+            continue
+        with open(file_full_path, 'r', encoding='GB18030') as file_input:
+            file_lines = file_input.readlines()
+            for file_line in file_lines:
+                print(file_line)
+                file_line = file_line.strip()
+                tokens = re.split(' |,', file_line)
+                # tokens = file_line.split(" ")
+                filtered_tokens = []
+                for token in tokens:
+                    if token:
+                        filtered_tokens.append(token.strip())
+                print(filtered_tokens)
+                # 过滤空行
+                if not filtered_tokens:
+                    continue
+                if ":" not in filtered_tokens[trade_time_index[software_kind]]:
+                    continue
+                line_result = file_processor.process_line(filtered_tokens)
+                final_result_set.update(line_result)
 
 
 def generate_result_file():

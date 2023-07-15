@@ -1,7 +1,7 @@
+from input_processor import InputProcessor
 
 
+class WenHua(InputProcessor):
 
-
-def process(file_path):
-    return []
-
+    def process_line(self, tokens):
+        return []
