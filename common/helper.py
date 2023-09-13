@@ -28,18 +28,22 @@ class Helper:
         result.append(time_field_tokens[0] + formatted_15minute)
         return result
 
-    
+
+    last_actions = {}
     processed_count = {}
     color = ['COLORRED', 'COLORGREEN', 'COLORWHITE', 'COLORMAGENTA', 'COLORCYAN']
 
     
     @staticmethod
-    def gen_color(trade_direction, symbol):
+    def gen_color(trade_direction, symbol, trade_action):
         count = Helper.processed_count.get(symbol, 0)
         # print('%s %s', trade_direction, count)
         index = int(count % 10 / 2)
-        count = count + 1
-        Helper.processed_count[symbol] = count
+        last_action = Helper.last_actions.get(symbol, '')
+        if last_action != trade_action:
+            count = count + 1
+            Helper.processed_count[symbol] = count
+        Helper.last_actions[symbol] = trade_action
         return Helper.color[index]
 
     @staticmethod
@@ -62,7 +66,7 @@ class Helper:
         # DRAWTEXT(DATE=230512&&TIME=0900&&ISCONTRACT('OI309'),7956,'S>'),VALIGN1,COLORGREEN;
         for time_field in Helper.convert_time_field(time_str):
             result_str1 = 'DRAWTEXT(DATE=' + date_str + '&&TIME=' + time_field + '&&ISCONTRACT(\'' + symbol_str + '\'),' + price_str + ',\'' + text_str + '\'),' + Helper.gen_align(
-                action_str) + ',' + Helper.gen_color(direction_str, symbol_str) + ';'
+                action_str) + ',' + Helper.gen_color(direction_str, symbol_str, action_str) + ';'
             print(result_str1)
             result.append(result_str1)
         return result
