@@ -36,10 +36,10 @@ class Helper:
     @staticmethod
     def gen_color(trade_direction, symbol):
         count = Helper.processed_count.get(symbol, 0)
+        # print('%s %s', trade_direction, count)
+        index = int(count % 10 / 2)
         count = count + 1
         Helper.processed_count[symbol] = count
-        print('%s %s', trade_direction, count)
-        index = int(count % 10 / 2)
         return Helper.color[index]
 
     @staticmethod

@@ -17,6 +17,8 @@ from common.helper import Helper
 # 数据目录
 data_folder_path = 'D:\\work\\bondfuture_trade_history\\data'
 target_file = "D:\wh6通用版\Formula\TYPES\自编\TRADE_HISTORY_15M.XTRD"
+# data_folder_path = 'data'
+# target_file = "15M.XTRD"
 target_file_backup = "target_backup"
 
 # 生成的最终数据集
@@ -71,7 +73,7 @@ def process_data_folder():
                 for token in tokens:
                     if token.strip():
                         filtered_tokens.append(token.strip())
-                print(filtered_tokens)
+                # print(filtered_tokens)
                 # 过滤空行
                 if not filtered_tokens:
                     continue
