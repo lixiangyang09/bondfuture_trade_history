@@ -51,6 +51,8 @@ def process_data_folder():
     # 原有的数据，也需要进行保留
     final_result_set.update(origin_lines)
     # 读取数据文件夹下的交易记录
+    deduplicate = set()
+    filtered_lines = []
     for data_file in os.listdir(data_folder_path):
         file_type = identify_file_type(data_file)
         file_full_path = os.path.join(data_folder_path, data_file)
@@ -65,7 +67,6 @@ def process_data_folder():
         with open(file_full_path, 'r', encoding='GB18030') as file_input:
             file_lines = file_input.readlines()
             for file_line in file_lines:
-                print(file_line)
                 file_line = file_line.strip()
                 tokens = re.split(' |,', file_line)
                 # tokens = file_line.split(" ")
@@ -79,8 +80,12 @@ def process_data_folder():
                     continue
                 if ":" not in file_processor.get_time_str(filtered_tokens):
                     continue
-                line_result = Helper.generate_result(file_processor, filtered_tokens)
-                final_result_set.update(line_result)
+                if file_line not in deduplicate:
+                    filtered_lines.append(filtered_tokens)
+                deduplicate.add(file_line)
+        for filtered_line in filtered_lines:
+            line_result = Helper.generate_result(file_processor, filtered_line)
+            final_result_set.update(line_result)
         file_processor.clear_file()
 
 
