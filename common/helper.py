@@ -28,12 +28,19 @@ class Helper:
         result.append(time_field_tokens[0] + formatted_15minute)
         return result
 
+    
+    processed_count = {}
+    color = ['COLORRED', 'COLORGREEN', 'COLORWHITE', 'COLORMAGENTA', 'COLORCYAN']
+
+    
     @staticmethod
-    def gen_color(trade_direction):
-        if trade_direction == '买':
-            return 'COLORRED'
-        else:
-            return 'COLORGREEN'
+    def gen_color(trade_direction, symbol):
+        count = Helper.processed_count.get(symbol, 0)
+        count = count + 1
+        Helper.processed_count[symbol] = count
+        print('%s %s', trade_direction, count)
+        index = int(count % 10 / 2)
+        return Helper.color[index]
 
     @staticmethod
     def gen_align(trade_action):
@@ -55,7 +62,7 @@ class Helper:
         # DRAWTEXT(DATE=230512&&TIME=0900&&ISCONTRACT('OI309'),7956,'S>'),VALIGN1,COLORGREEN;
         for time_field in Helper.convert_time_field(time_str):
             result_str1 = 'DRAWTEXT(DATE=' + date_str + '&&TIME=' + time_field + '&&ISCONTRACT(\'' + symbol_str + '\'),' + price_str + ',\'' + text_str + '\'),' + Helper.gen_align(
-                action_str) + ',' + Helper.gen_color(direction_str) + ';'
+                action_str) + ',' + Helper.gen_color(direction_str, symbol_str) + ';'
             print(result_str1)
             result.append(result_str1)
         return result
