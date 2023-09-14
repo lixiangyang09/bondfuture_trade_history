@@ -37,23 +37,28 @@ def identify_file_type(file_name):
 
 def process_data_folder():
     # 备份目标文件
-    shutil.copyfile(target_file, target_file_backup)
+    # shutil.copyfile(target_file, target_file_backup)
 
     # 读取当前已有的记录，后续去重用
-    origin_lines = set()
-    with open(target_file, 'r', encoding='GB18030') as target_file_origin_handler:
-        for line in target_file_origin_handler.readlines():
-            line_stripped = line.strip()
-            if line_stripped == '</CODE>':
-                break
-            if line_stripped and 'CODE' not in line_stripped:
-                origin_lines.add(line_stripped)
+    # origin_lines = set()
+    # with open(target_file, 'r', encoding='GB18030') as target_file_origin_handler:
+    #     for line in target_file_origin_handler.readlines():
+    #         line_stripped = line.strip()
+    #         if line_stripped == '</CODE>':
+    #             break
+    #         if line_stripped and 'CODE' not in line_stripped:
+    #             origin_lines.add(line_stripped)
     # 原有的数据，也需要进行保留
-    final_result_set.update(origin_lines)
+    # final_result_set.update(origin_lines)
     # 读取数据文件夹下的交易记录
-    deduplicate = set()
-    filtered_lines = []
-    for data_file in os.listdir(data_folder_path):
+    candidate_files = os.listdir(data_folder_path)
+    candidate_files.sort(reverse=False)
+    total_count = 0
+    for data_file in candidate_files:
+        if total_count > 2500:
+            print(f'skip {data_file} due to count')
+        deduplicate = set()
+        filtered_lines = []
         file_type = identify_file_type(data_file)
         file_full_path = os.path.join(data_folder_path, data_file)
 
@@ -83,6 +88,8 @@ def process_data_folder():
                 if file_line not in deduplicate:
                     filtered_lines.append(filtered_tokens)
                 deduplicate.add(file_line)
+        print(file_full_path)
+        total_count += len(filtered_lines)
         for filtered_line in filtered_lines:
             line_result = Helper.generate_result(file_processor, filtered_line)
             final_result_set.update(line_result)

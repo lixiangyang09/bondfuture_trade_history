@@ -36,14 +36,16 @@ class Helper:
     
     @staticmethod
     def gen_color(trade_direction, symbol, trade_action):
-        count = Helper.processed_count.get(symbol, 0)
+        count = Helper.processed_count.get(symbol, -1)
         # print('%s %s', trade_direction, count)
-        index = int(count % 10 / 2)
         last_action = Helper.last_actions.get(symbol, '')
         if last_action != trade_action:
             count = count + 1
-            Helper.processed_count[symbol] = count
+        else:
+            count = count + 2
+        Helper.processed_count[symbol] = count
         Helper.last_actions[symbol] = trade_action
+        index = int(count % 10 / 2)
         return Helper.color[index]
 
     @staticmethod
