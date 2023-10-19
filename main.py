@@ -13,10 +13,14 @@ from input.kuaiqi import KuaiQi
 from input.wenhua import WenHua
 from common.logger import logger
 from common.helper import Helper
+from common.settings import Settings
 
 # 数据目录
-data_folder_path = 'D:\\work\\bondfuture_trade_history\\data'
-target_file = "D:\wh6通用版\Formula\TYPES\自编\TRADE_HISTORY_15M.XTRD"
+data_folder_path = 'C:\\work\\bondfuture_trade_history\\data'
+
+target_file_list = ["C:\wh6通用版\Formula\TYPES\自编\TRADE_HISTORY_15M.XTRD",
+                    "C:\wh6通用版\Formula\TYPES\自编\TRADE_HISTORY_5M.XTRD",]
+target_time_precision_list = [15, 5]
 # data_folder_path = 'data'
 # target_file = "15M.XTRD"
 target_file_backup = "target_backup"
@@ -96,7 +100,7 @@ def process_data_folder():
         file_processor.clear_file()
 
 
-def generate_result_file():
+def generate_result_file(target_file):
     os.remove(target_file)
     # 合并结果
     final_result = []
@@ -125,11 +129,17 @@ def generate_result_file():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    logger.info("run")
-    # 加载数据目录
-    process_data_folder()
+    for index in range(0, len(target_file_list)):
+        target_file = target_file_list[index]
+        target_precison = target_time_precision_list[index]
+        logger.info(f"process {target_file} with {target_precison}")
+        Settings.set_time_precision(target_precison)
+        Settings.set_target_file_name(target_file)
+        final_result_set.clear()
+        # 加载数据目录
+        process_data_folder()
 
-    # 生成最终结果
-    generate_result_file()
+        # 生成最终结果
+        generate_result_file(target_file)
 
 

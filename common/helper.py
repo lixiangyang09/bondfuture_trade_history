@@ -1,5 +1,7 @@
 import statistics
 
+from common.settings import Settings
+
 
 class Helper:
     @staticmethod
@@ -21,10 +23,10 @@ class Helper:
     def convert_time_field(time_field):
         result = []
         time_field_tokens = time_field.split(':')
-        minutes = int(int(time_field_tokens[1]) / 15)
+        minutes = int(int(time_field_tokens[1]) / Settings.time_precision)
         # if minutes < 3:
         #     minutes += 1
-        formatted_15minute = '{:0>2d}'.format(minutes * 15)
+        formatted_15minute = '{:0>2d}'.format(minutes * Settings.time_precision)
         result.append(time_field_tokens[0] + formatted_15minute)
         return result
 
